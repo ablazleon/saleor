@@ -41,7 +41,6 @@ jobs:
       - gcp-gcr/gcr-auth:
           gcloud-service-key: GCLOUD_SERVICE_KEY
           google-project-id: GOOGLE_PROJECT_ID
-          google-compute-zone: GOOGLE_COMPUTE_ZONE
       - gcp-gcr/build-image:
           dockerfile: Dockerfile
           google-project-id: GOOGLE_PROJECT_ID

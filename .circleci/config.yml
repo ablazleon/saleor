@@ -1,4 +1,6 @@
 version: 2
+orbs:
+  gcp-gcr: circleci/gcp-gcr@0.6.1
 jobs:
   build:
     working_directory: /app
@@ -36,16 +38,21 @@ jobs:
             docker tag ablazleon/smallshop:latest ablazleon/smallshop:$CIRCLE_SHA1
             docker push ablazleon/smallshop:$CIRCLE_SHA1
             docker push ablazleon/smallshop:latest
-      - run:
-          name: Deploy saleor-demo
-          command: |
-            if [ -n "$CIRCLE_TAG" ]; then
-              apk add --upgrade --no-cache curl libcurl
-              sh ./scripts/push_static.sh
-              curl -u $DEMO_DEPLOY_KEY: \
-                -d build_parameters[CIRCLE_JOB]=deploy \
-                https://circleci.com/api/v1.1/project/github/mirumee/saleor-demo/tree/master
-            fi
+      - gcp-gcr/gcr-auth:
+          gcloud-service-key: GCLOUD_SERVICE_KEY
+          google-project-id: GOOGLE_PROJECT_ID
+          google-compute-zone: GOOGLE_COMPUTE_ZONE
+      - gcp-gcr/build-image:
+          dockerfile: Dockerfile
+          google-project-id: GOOGLE_PROJECT_ID
+          image: $IMAGE_NAME
+          registry-url: "gcr.io"
+          tag: $CIRCLE_SHA1
+      - gcp-gcr/push-image:
+          google-project-id: GOOGLE_PROJECT_ID
+          image: $IMAGE_NAME
+          registry-url: "gcr.io"
+          tag: $CIRCLE_SHA1
 
 workflows:
   version: 2

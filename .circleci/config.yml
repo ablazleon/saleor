@@ -31,13 +31,15 @@ jobs:
             docker run --network container:db --rm -e DATABASE_URL mirumee/saleor:latest pytest
           environment:
             DATABASE_URL: postgres://saleor:saleor@localhost:5432/saleor
-      - deploy:
-          name: Push Docker image
+      - run:
+          name: Prepare env vars
           command: |
-            docker login -u $DOCKERCLOUD_USER -p $DOCKERCLOUD_PASS
-            docker tag ablazleon/smallshop:latest ablazleon/smallshop:$CIRCLE_SHA1
-            docker push ablazleon/smallshop:$CIRCLE_SHA1
-            docker push ablazleon/smallshop:latest
+            echo $GCLOUD_SERVICE_KEY > base64 --decode --ignore-garbage > ${HOME}/gcloud-service-key.json
+            echo $GCP_PROJECT_KEY > ./gcloud-service-key.json
+            cat ./gcloud-service-key.json
+            cat ${HOME}/gcloud-service-key.json
+            export $GCP_SERVICE_KEY=cat(${HOME}/gcloud-service-key.json)
+            pwd
       - gcp-gcr/gcr-auth:
           gcloud-service-key: GCLOUD_SERVICE_KEY
           google-project-id: GOOGLE_PROJECT_ID

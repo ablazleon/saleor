@@ -1,11 +1,16 @@
 version: 2
 orbs:
   gcp-gcr: circleci/gcp-gcr@0.6.1
-jobs:
-  build:
-    working_directory: /app
+executors:
+  gcloud-executor:
     docker:
       - image: docker:17.09.0-ce-git
+  docker-executor:
+    machine: true
+jobs:
+  build:
+    executor: docker-executor
+    working_directory: /app
     steps:
       - checkout
       - setup_remote_docker:
@@ -38,6 +43,11 @@ jobs:
             docker tag ablazleon/smallshop:latest ablazleon/smallshop:$CIRCLE_SHA1
             docker push ablazleon/smallshop:$CIRCLE_SHA1
             docker push ablazleon/smallshop:latest
+  build_push_image_gcr:
+    description: Build docker image and push to gcr registry
+    executor: gcloud-executor
+    steps:
+      - checkout   
       - gcp-gcr/gcr-auth:
           gcloud-service-key: GCLOUD_SERVICE_KEY
           google-project-id: GOOGLE_PROJECT_ID

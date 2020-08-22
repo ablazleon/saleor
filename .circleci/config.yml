@@ -39,10 +39,6 @@ jobs:
             docker tag ablazleon/smallshop:latest ablazleon/smallshop:$CIRCLE_SHA1
             docker push ablazleon/smallshop:$CIRCLE_SHA1
             docker push ablazleon/smallshop:latest
-  build_push_image_gcr:
-    description: Build docker image and push to gcr registry
-    steps:
-      - checkout   
       - gcp-gcr/gcr-auth:
           gcloud-service-key: GCLOUD_SERVICE_KEY
           google-project-id: GOOGLE_PROJECT_ID

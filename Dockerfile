@@ -42,9 +42,6 @@ ARG STATIC_URL
 ENV STATIC_URL ${STATIC_URL:-/static/}
 RUN SECRET_KEY=dummy STATIC_URL=${STATIC_URL} python3 manage.py collectstatic --no-input
 
-# Fill the tables
-RUN python3 manage.py migrate --no-input
-
 EXPOSE 8000
 ENV PYTHONUNBUFFERED 1
 

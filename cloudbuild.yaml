@@ -16,11 +16,11 @@ steps:
     id: Push
   - name: "gcr.io/google-appengine/exec-wrapper"
     args: ["-i", "${_GCR_HOSTNAME}:/${PROJECT_ID}/${REPO_NAME}:${COMMIT_SHA}",
-           "-s", "${PROJECT_ID}:${_REGION}:myinstance",
+           "-s", "smallshop-dev:europe-west1:saleor-db-dev",
            "--", "python", "manage.py", "migrate"]
   - name: "gcr.io/google-appengine/exec-wrapper"
     args: ["-i", "${_GCR_HOSTNAME}:/${PROJECT_ID}/${REPO_NAME}:${COMMIT_SHA}",
-           "-s", "${PROJECT_ID}:${_REGION}:myinstance",
+           "-s", "smallshop-dev:europe-west1:saleor-db-dev",
            "--", "python", "manage.py", "collectstatic", "--no-input"]    
   - name: gcr.io/google.com/cloudsdktool/cloud-sdk
     args:
